@@ -14,15 +14,6 @@ One hub instance can bridge every accessory on a paired device. You add one chil
 
 ## Hub driver: homekit-controller
 
-### What it does
-
-- **Discovers accessories** on the network using mDNS/Bonjour (`_hap._tcp`), listing each device's name, IP address, port, model, and whether it is currently pairable or already paired.
-- **Pairs** with an accessory using its HomeKit setup code. The full HAP handshake — SRP-6a pair-setup, pair-verify, and the ChaCha20-Poly1305 encrypted session — is implemented in pure Lua.
-- **Removes pairing** cleanly, telling the accessory to delete the controller so it is genuinely unpaired rather than only forgotten locally.
-- **Lists paired accessories** with their `aid`, name, service type, and the child driver to use for each.
-- **Bridges** each accessory to its child driver, keeping state synchronised in both directions.
-- **Identifies** an accessory, triggering its physical identify routine to confirm which unit you are talking to.
-
 ### Actions
 
 | Action | Description |
