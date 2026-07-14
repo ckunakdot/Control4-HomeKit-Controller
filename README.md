@@ -96,6 +96,13 @@ Bridges a HomeKit Lightbulb to a Control4 light_v2 proxy.
 | Lock Mechanism | homekit-lock | lock |
 | Lightbulb | homekit-light | light_v2 |
 
+## Screenshots
+
+<img width="584" height="250" alt="image" src="https://github.com/user-attachments/assets/46c39f08-2c7e-4f9b-b550-5488ba1c898c" />
+<img width="591" height="281" alt="image" src="https://github.com/user-attachments/assets/bb39ba71-a7a1-4503-a503-0abd57e8028d" />
+<img width="598" height="306" alt="image" src="https://github.com/user-attachments/assets/1723d7fc-febb-4fb1-8905-70d297e61c30" />
+
+
 ## Using the drivers
 
 1. Add the `homekit-controller` driver to your project.
