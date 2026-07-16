@@ -161,6 +161,17 @@ Bridges a HomeKit Security System to Control4 security panel and partition proxi
 | Garage Door Opener | homekit-garage | relay and contact sensors |
 | Security System | homekit-alarm | securitypanel and security |
 
+## Tested Controllers
+
+| Model | Operating System | Works |
+| --- | --- | --- |
+| Core lite | 4.2.0 | Y |
+| Core 3 |  4.2.0 | Y |
+| EA5 | 4.2.0 | Y |
+| EA3 | 3.4.3 | Y |
+| EA1 | 4.2.0 | Y |
+| HC800 | 3.3.0 | N |
+
 ## Tested devices
 
 These have been paired and exercised against the drivers. Anything that speaks HAP should work; this is simply what has been confirmed.
