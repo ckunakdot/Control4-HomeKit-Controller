@@ -5,7 +5,8 @@ A native HomeKit controller for Control4, implemented entirely in DriverWorks Lu
 ![Version](https://img.shields.io/badge/version-2.2-blue)
   <img src="https://img.shields.io/badge/Control4-OS%203.4.3-red" alt="Control4 OS 3.4.3">
   <img src="https://img.shields.io/badge/Control4-OS%204.x-blue" alt="Control4 OS 4.x">
-
+  <a href="https://www.buymeacoffee.com/ckunakdot" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
+  
 The suite is made up of one hub driver and a set of per-accessory child drivers. The hub owns discovery, pairing, and the encrypted connection to the accessory. Each child driver presents one paired accessory to Control4 as the appropriate native proxy.
 
 ## How it fits together
