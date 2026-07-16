@@ -1,13 +1,14 @@
 # Control4 HomeKit Controller
 
 A native HomeKit controller for Control4, implemented entirely in DriverWorks Lua. It pairs directly with "Works with HomeKit" accessories over the local network and bridges them into Control4 as standard device proxies. No Home Assistant, no external bridge software, and no cloud connection are required — the Control4 Director talks to each accessory directly using the HomeKit Accessory Protocol (HAP).
+The suite is made up of one hub driver and a set of per-accessory child drivers. The hub owns discovery, pairing, and the encrypted connection to the accessory. Each child driver presents one paired accessory to Control4 as the appropriate native proxy.
+##
 
 ![Version](https://img.shields.io/badge/version-2.2-blue)
   <img src="https://img.shields.io/badge/Control4-OS%203.4.3-red" alt="Control4 OS 3.4.3">
   <img src="https://img.shields.io/badge/Control4-OS%204.x-blue" alt="Control4 OS 4.x">
   <a href="https://www.buymeacoffee.com/ckunakdot" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
-  
-The suite is made up of one hub driver and a set of per-accessory child drivers. The hub owns discovery, pairing, and the encrypted connection to the accessory. Each child driver presents one paired accessory to Control4 as the appropriate native proxy.
+
 
 ## How it fits together
 
