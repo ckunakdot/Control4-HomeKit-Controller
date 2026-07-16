@@ -180,7 +180,7 @@ The accessory then appears in Navigator as a native device and can be used in Co
 - Some low-cost accessories ship with limited HAP implementations and may not pair reliably. The Compact Pairing option on the hub resolves this for some of them.
 
 ## Screenshots
-
+<img width="179" height="146" alt="image" src="https://github.com/user-attachments/assets/52183493-79c0-4047-9cc8-dff2988a895b" />
 <img width="584" height="250" alt="image" src="https://github.com/user-attachments/assets/46c39f08-2c7e-4f9b-b550-5488ba1c898c" />
 <img width="591" height="281" alt="image" src="https://github.com/user-attachments/assets/bb39ba71-a7a1-4503-a503-0abd57e8028d" />
 <img width="598" height="306" alt="image" src="https://github.com/user-attachments/assets/1723d7fc-febb-4fb1-8905-70d297e61c30" />
