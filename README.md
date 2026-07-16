@@ -14,6 +14,15 @@ One hub instance can bridge every accessory on a paired device. You add one chil
 
 ## Hub driver: homekit-controller
 
+### What it does
+
+- **Discovers accessories** on the network using mDNS/Bonjour (`_hap._tcp`), listing each device's name, IP address, port, model, and whether it is currently pairable or already paired.
+- **Pairs** with an accessory using its HomeKit setup code. The full HAP handshake.
+- **Removes pairing** cleanly, telling the accessory to delete the controller so it is genuinely unpaired rather than only forgotten locally.
+- **Lists paired accessories** with their `aid`, name, service type, and the child driver to use for each.
+- **Bridges** each accessory to its child driver, keeping state synchronised in both directions.
+- **Identifies** an accessory, triggering its physical identify routine to confirm which unit you are talking to.
+
 ### Actions
 
 | Action | Description |
@@ -34,6 +43,8 @@ One hub instance can bridge every accessory on a paired device. You add one chil
 | Discovered Device | Dropdown of discovered accessories; selecting one fills in the IP and port. |
 | Setup Code | The HomeKit setup code from the accessory, in the form 123-45-678. |
 | Pairing Status | Read-only status such as Unpaired, Pairing, or Connected. |
+| Connected Device | Read-only. Names the paired accessory, read from the accessory itself after connecting: name, manufacturer, model and firmware. A bridge also shows how many accessories it exposes. |
+| Poll Interval | Seconds between state polls, so changes made at the device itself are picked up. 0 disables polling. |
 | Compact Pairing | Optional. Shrinks the pairing request for accessories whose HAP implementations reject the standard one. Leave off unless a device fails to pair. |
 | Debug Mode | Enables verbose logging to the Lua output window. |
 
@@ -51,12 +62,22 @@ Bridges a HomeKit Window Covering to a Control4 blind proxy.
 
 ### homekit-thermostat
 
-Bridges a HomeKit Thermostat to a Control4 thermostatV2 proxy.
+Bridges a HomeKit climate accessory to a Control4 thermostatV2 proxy. It supports both HomeKit climate services and detects which one the accessory uses:
+
+- **Thermostat**, used by whole-home thermostats such as ecobee and Nest.
+- **Heater/Cooler**, used by mini-splits, window air conditioners, and virtual thermostats. These have no single target temperature, so the heat and cool thresholds act as the setpoints and Off is expressed by making the unit inactive.
+
+Features:
 
 - Reports current temperature and the active heating or cooling state.
-- Sets the single setpoint, and separate heat and cool setpoints in Auto mode.
+- Sets heat and cool setpoints, and a single setpoint where the accessory uses one.
 - Selects HVAC mode: Off, Heat, Cool, or Auto.
+- Reports relative humidity when the accessory measures it.
+- Fan control (Auto or On) when the accessory exposes a fan.
+- Reports connection status to Control4.
 - Handles Fahrenheit and Celsius. The selected scale is remembered, temperatures are reported in that scale, and the accessory's own display units are kept in sync. HomeKit works in Celsius internally; the driver converts at the boundary.
+- Respects the accessory's declared limits. Every accessory publishes a minimum, maximum and step size for each value it accepts, and rejects anything that breaks them. The driver reads those limits and fits each setpoint to them, so a value the thermostat cannot accept is adjusted to the nearest one it can rather than being silently refused.
+- Routes each setpoint to the right place for the current mode. Control4 keeps heat and cool as a pair and sends both whenever either changes, while a thermostat in Heat or Cool mode has only one target temperature. The driver writes the setpoint that matches the active mode to the target, and stores the other on its own threshold, so neither is lost and neither overwrites the other. Setpoints set while the thermostat is Off are stored as well.
 
 ### homekit-lock
 
@@ -86,14 +107,17 @@ Bridges a HomeKit fan to a Control4 fan proxy. Pick the variant matching the num
 - Reports on/off state and current speed.
 - Works with both HomeKit fan services, the classic Fan and the newer Fanv2.
 - HomeKit fans use a 0-100 percent rotation speed; the driver converts to and from Control4's discrete speeds, and sends power and speed together so the fan applies them as one change.
+- Respects the speed steps the fan declares, so fans that only accept certain speed values are driven to the nearest one they allow.
 
 ### homekit-contact
 
 Bridges any HomeKit binary sensor to a Control4 contact sensor.
 
-- Supports Contact, Motion, Occupancy, Smoke, and Leak sensors, detecting automatically which the accessory exposes.
+- Supports Contact, Motion, Occupancy, Smoke, and Leak sensors.
 - Reports OPENED when the sensor is active or detecting, CLOSED when it is not.
+- A Sensor Type property selects which sensor to follow. One accessory can expose several at once, such as an ecobee that publishes both motion and occupancy, so add one instance per sensor and point them all at the same Accessory AID. Left on Auto, the driver uses the first sensor it finds, which suits accessories with only one.
 - An Invert property swaps the reported state for cases where the opposite convention is wanted.
+- The output is a standard Control4 contact sensor, so it can be bound to a Motion Sensor or similar proxy to present properly in Navigator with the matching events and history.
 
 ### homekit-sensor
 
@@ -127,6 +151,7 @@ Bridges a HomeKit Security System to Control4 security panel and partition proxi
 | --- | --- | --- |
 | Window Covering | homekit-shade | blind |
 | Thermostat | homekit-thermostat | thermostatV2 |
+| Heater/Cooler | homekit-thermostat | thermostatV2 |
 | Lock Mechanism | homekit-lock | lock |
 | Lightbulb | homekit-light | light_v2 |
 | Switch, Outlet | homekit-light | light_v2 (on/off) |
@@ -145,6 +170,14 @@ Bridges a HomeKit Security System to Control4 security panel and partition proxi
 5. Add the matching child driver for each accessory, bind it to the hub, and set its **Accessory AID** to the value from step 4.
 
 The accessory then appears in Navigator as a native device and can be used in Composer programming like any other.
+
+## Notes
+
+- A HomeKit setup code pairs an accessory to the first controller that claims it. If an accessory is already paired to another controller or app, remove it there first, or reset its HomeKit pairing, before pairing it here.
+- Use **Remove Pairing** before deleting or replacing a hub driver. That releases the pairing on the accessory as well; otherwise the accessory keeps a pairing that no longer exists and will refuse to pair again until it is reset.
+- Pairings are stored per driver instance on a specific controller. To move to a newer version of a driver, use Update Driver in place so the existing pairings carry over.
+- Everything runs locally on the Control4 Director. There is no cloud dependency and no bridge software required.
+- Some low-cost accessories ship with limited HAP implementations and may not pair reliably. The Compact Pairing option on the hub resolves this for some of them.
 
 ## Screenshots
 
