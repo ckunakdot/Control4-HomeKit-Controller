@@ -1,6 +1,6 @@
 # Control4 HomeKit Controller
 
-A native HomeKit controller for Control4. It pairs directly with "Works with HomeKit" accessories over the local network and bridges them into Control4 as standard device proxies. No Home Assistant, no external bridge software, and no cloud connection are required — the Control4 Director talks to each accessory directly using the HomeKit Accessory Protocol (HAP).
+A native HomeKit controller for Control4, implemented entirely in DriverWorks Lua. It pairs directly with "Works with HomeKit" accessories over the local network and bridges them into Control4 as standard device proxies. No Home Assistant, no external bridge software, and no cloud connection are required — the Control4 Director talks to each accessory directly using the HomeKit Accessory Protocol (HAP).
 
 The suite is made up of one hub driver and a set of per-accessory child drivers. The hub owns discovery, pairing, and the encrypted connection to the accessory. Each child driver presents one paired accessory to Control4 as the appropriate native proxy.
 
@@ -171,27 +171,23 @@ Bridges a HomeKit Security System to Control4 security panel and partition proxi
 
 The accessory then appears in Navigator as a native device and can be used in Composer programming like any other.
 
-## Notes
-
-- A HomeKit setup code pairs an accessory to the first controller that claims it. If an accessory is already paired to another controller or app, remove it there first, or reset its HomeKit pairing, before pairing it here.
-- Use **Remove Pairing** before deleting or replacing a hub driver. That releases the pairing on the accessory as well; otherwise the accessory keeps a pairing that no longer exists and will refuse to pair again until it is reset.
-- Pairings are stored per driver instance on a specific controller. To move to a newer version of a driver, use Update Driver in place so the existing pairings carry over.
-- Everything runs locally on the Control4 Director. There is no cloud dependency and no bridge software required.
-- Some low-cost accessories ship with limited HAP implementations and may not pair reliably. The Compact Pairing option on the hub resolves this for some of them.
-
 ## Screenshots
-System View
 
-<img width="179" height="146" alt="image" src="https://github.com/user-attachments/assets/52183493-79c0-4047-9cc8-dff2988a895b" />
+**System View**
 
-Driver View
-<img width="809" height="333" alt="image" src="https://github.com/user-attachments/assets/d4f9f867-df08-42cc-909b-09ded10a28b0" />
-Discovery List
-<img width="813" height="362" alt="image" src="https://github.com/user-attachments/assets/36669be1-f52e-49fe-885e-2c156e263909" />
-Show Accessories output
-<img width="884" height="281" alt="image" src="https://github.com/user-attachments/assets/ddef788a-1c73-41bc-b795-c7dbac0d021d" />
+<img width="179" height="146" alt="System View" src="https://github.com/user-attachments/assets/52183493-79c0-4047-9cc8-dff2988a895b" />
 
+**Driver View**
 
+<img width="809" height="333" alt="Driver View" src="https://github.com/user-attachments/assets/d4f9f867-df08-42cc-909b-09ded10a28b0" />
+
+**Discovery List**
+
+<img width="813" height="362" alt="Discovery List" src="https://github.com/user-attachments/assets/36669be1-f52e-49fe-885e-2c156e263909" />
+
+**Show Accessories output**
+
+<img width="884" height="281" alt="Show Accessories output" src="https://github.com/user-attachments/assets/ddef788a-1c73-41bc-b795-c7dbac0d021d" />
 
 ## Notes
 
