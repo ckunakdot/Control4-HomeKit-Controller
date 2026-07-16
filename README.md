@@ -181,6 +181,7 @@ The accessory then appears in Navigator as a native device and can be used in Co
 
 ## Screenshots
 System View
+
 <img width="179" height="146" alt="image" src="https://github.com/user-attachments/assets/52183493-79c0-4047-9cc8-dff2988a895b" />
 
 Driver View
