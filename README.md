@@ -17,7 +17,7 @@ One hub instance can bridge every accessory on a paired device. You add one chil
 ### What it does
 
 - **Discovers accessories** on the network using mDNS/Bonjour (`_hap._tcp`), listing each device's name, IP address, port, model, and whether it is currently pairable or already paired.
-- **Pairs** with an accessory using its HomeKit setup code. The full HAP handshake — SRP-6a pair-setup, pair-verify, and the ChaCha20-Poly1305 encrypted session — is implemented in pure Lua.
+- **Pairs** with an accessory using its HomeKit setup code. The full HAP handshake.
 - **Removes pairing** cleanly, telling the accessory to delete the controller so it is genuinely unpaired rather than only forgotten locally.
 - **Lists paired accessories** with their `aid`, name, service type, and the child driver to use for each.
 - **Bridges** each accessory to its child driver, keeping state synchronised in both directions.
@@ -176,7 +176,7 @@ These have been paired and exercised against the drivers. Anything that speaks H
 Notes from testing these:
 
 - The ecobee publishes its thermostat, motion sensor and occupancy sensor on one accessory, so all three child drivers share the same Accessory AID and are told apart by Sensor Type.
-- Lutron processors only publish the loads that have been shared to HomeKit. If a load is missing from Show Accessories, share it in the Lutron app first.
+- Lutron processors only publish the loads that have been shared to HomeKit. If a load is missing from Show Accessories, share it in the Lutron app first. (RA3 Only Caseta shows all)
 - Lutron accessory IDs are very large numbers rather than the small ones most accessories use. This is handled, and is worth knowing only because the `aid` you copy from Show Accessories will be long.
 - Homebridge is useful for testing. Its plugins can present almost any accessory type, and its pairing can be reset from the Homebridge UI without touching real hardware, which makes it a safe way to try a child driver before pointing it at something real.
 - A Homebridge virtual thermostat is a Heater/Cooler rather than a Thermostat. Both are supported, but they behave differently: see the homekit-thermostat section.
