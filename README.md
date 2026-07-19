@@ -240,11 +240,12 @@ The accessory then appears in Navigator as a native device and can be used in Co
 
 **System View**
 
-<img width="179" height="146" alt="System View" src="https://github.com/user-attachments/assets/52183493-79c0-4047-9cc8-dff2988a895b" />
+
 
 **Driver View**
 
 <img width="809" height="333" alt="Driver View" src="https://github.com/user-attachments/assets/d4f9f867-df08-42cc-909b-09ded10a28b0" />
+<img width="248" height="419" alt="image" src="https://github.com/user-attachments/assets/4af2e9a6-492a-4005-882f-471f3ac63cd2" />
 
 **Discovery List**
 
