@@ -1,0 +1,171 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat{\fonttbl{\f0\froman\fprq2\fcharset0 Liberation Serif;}}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\nowidctlpar\kerning1\b\f0\fs24\lang1033 CONTROL4 DRIVER FOR GENERIC GARAGE DOORS CONTROLLED VIA RELAYS\b0\par
+Copyright 2021 Wirepath Home Systems, LLC. All Rights Reserved.\par
+\par
+\b This driver requires Control4 OS Version 2.9 or later.\b0\par
+\par
+This driver provides an Experience Button which can be used to control garage doors via relays, and shows the current state of the garage door.\par
+\par
+The driver is designed as an 'all in one' solution supporting garage doors controlled by 1, 2 or 3 relays.\par
+\par
+If contact closure inputs are available on the garage door and connected to the driver, they will be used to determine the status of the garage door.\par
+\par
+NOTE: As this driver is an experience button, to view the garage door on Navigators, you must show the button, in System Design -> Properties -> Tab -> Visibility and Display Order of desired category.  For example, you could choose to show the garage door experience button under Family Room Navigator's Security Menu.\par
+\par
+\ul\b                                                                      \ulnone\b0\par
+\b PROPERTIES\b0\par
+\par
+* Driver Version: Shows the version of the currently running driver.\par
+\par
+* Debug Mode: Allows for showing Debug Messages on the Lua Output window.\par
+\par
+* Number of Relays: Configuration for the number of relays used to control the garage door.\par
+\par
+  * 1 Relay is used to either toggle the garage door state (like a garage door), or to set the requested state of the garage door (Open / Closed).\par
+\par
+  * 2 Relays are used to set or trigger the state of the garage door (Open Relay, Close Relay).\par
+\par
+  * 3 Relays are used to set or trigger the state of the garage door (Open Relay, Close Relay, Stop Relay).\par
+\par
+* Relay Configuration: Relays are either configured as 'Hold' relays, where the relay stays activated to set the garage door state, or as 'Pulse' relays, where the relay is activated, and then deactivated, to set the garage door to a state.  If a single pulse relay is used to activate the door mechanism, then you must connect at least one contact for the driver to know the state of the door.\par
+\par
+* (Hold) Fail Safe Seconds: If 'Relay Configuration' is set to 'Hold', 'Stop' will be activated after Fail Safe Seconds have passed.  If Fail Safe is not required, set to 0.\par
+\par
+If a stop relay is being used, it will be triggered.  If not, the 'Open' or 'Close' relay will be deactivated.\par
+\par
+* (Pulse) Pulse Time milliseconds: The amount of time a relay will be pulsed.\par
+\par
+* Invert Relays: If relays are opened to initiate the action, instead of closed, this property should be set to 'Yes'.\par
+\par
+* Contact Status: Shows the contact sensors found attached to the driver.\par
+\par
+* Contact Debounce milliseconds: Amount of time the driver will ignore additional state changes from a contact, to avoid 'contact bounce' causing the state to rapidly change.\par
+\par
+* Invert Contacts: If contacts are opened to indicate the state, instead of closed, this property should be set to 'Yes'.\par
+\par
+* Still Open Time: Amount of time (seconds) the door must be open after which the driver will fire the 'Still Open' event.\par
+\par
+* Expected Open Time: Amount of time (in seconds) the door should take to open after which the driver will fire the 'Did Not Open' event.\par
+\b NOTE\b0 : Expected Open Time is hidden if both contact sensors are not connected.\par
+\par
+* Expected Close Time: Amount of time (in seconds) the door should take to close after which the driver will fire the 'Did Not Close' event.\par
+\b NOTE\b0 : Expected Close Time is hidden if both contact sensors are not connected.\par
+\par
+* Opened LED Color: Color of attached keypad buttons on 'Opened' garage door state.\par
+\par
+* Closed LED Color: Color of attached keypad buttons on 'Closed' garage door state.\par
+\par
+* Off LED Color: Color of attached Open/Close keypad buttons when not active (i.e. 'Open' button link when door closed and vice-versa).\par
+\par
+* Partial Open LED Color: Color of attached keypad buttons on 'Partially Opened' garage door state.\par
+\par
+* Unknown LED Color: Color of attached keypad buttons on 'Unknown' garage door state.\par
+\par
+\ul                                                                      \ulnone\par
+\b SETUP\b0\par
+\par
+First select the number of relays that are used to control the garage doors.  Note if this property is changed then any existing relay connections will be unbound.\par
+\par
+Then select if the relays are to be pulsed or held (latched) type.\par
+\par
+Connect the relays to the 'Open/Close/Stop' relay connections in 'Connections -- Control/AV'.\par
+\par
+If Hold relay configuration is selected then a failsafe time can be set for 2 and 3 relay devices which will open the relay (and close the stop relay if enabled) after the garage door should have closed.  If you do not require this feature set this value to 0.\par
+\par
+If Pulse relay configuration is selected then you can set the time the relay should be pulsed for in milliseconds.\par
+\par
+If the relays are inverted (i.e. they need to be opened to initiate the action) set invert relay to Yes.\par
+\par
+For contact closure feedback, connect contact connections to the 'Closed Contact' (active on the door being fully closed) and 'Opened Contact' (active on the door being fully opened) contact sensor connections in 'Connections -- Control/AV'.\par
+\par
+If contact closures are used, set the properties for debounce time and to invert the contact if desired.\par
+\par
+If desired, set LED color choosers to show the status of the garage door when connected to a Control4 keypad.\par
+\par
+\ul\b                                                                      \ulnone\b0\par
+\b FEEDBACK\b0\par
+\par
+The Experience Button shows the current status of the garage door, based on either contact closures (if installed), or on the last requested state.\par
+\par
+On Director restart, the driver will attempt to restore current state:\par
+\par
+If Contacts are configured to determine the garage door state, the state of the garage door will be shown according to the contacts' state on restart.\par
+\par
+If no contacts are configured, the driver will show garage door state based on the current relay state, with the following limitations:\par
+\par
+* If Relay Configuration is set to 'Hold', the garage door state will be shown based on the 'Close' or 'Open' relays' state.  If the 'Stop' relay is active, the 'Unknown' state will be shown on the Experience Button.\par
+\par
+* If Relay Configuration is set to 'Pulse', no state information is available, and the 'Unknown' state will be shown on the Experience Button.\par
+\par
+\ul\b                                                                      \ulnone\b0\par
+\b CONNECTIONS\b0\par
+\par
+Relay Connections are based on the 'Number of Relays' property.  \par
+\par
+\b Note that if the \lquote Number of Relays\rquote  property is changed then any existing connections will be removed.\b0\par
+\par
+The 'Closed Contact' and 'Opened Contact' connections are optional but will be used for garage door status if connected.\par
+\par
+Keypad button links are available to Open, Close or Toggle the garage door.\par
+\par
+\ul\b                                                                      \ulnone\b0\par
+\b EVENTS\b0\par
+\par
+* Selected: This event is fired when the Experience Button is selected in the Control4 UI.\par
+\par
+* Opened: This event is fired when the garage door enters an opened state.\par
+\par
+* Closed: This event is fired when the garage door enters a closed state.\par
+\par
+* Partial: This event is fired when the garage door enters a partially opened state.  This event will only fire if the garage door status is determined by 2 installed contacts.\par
+\par
+* Unknown: This event is fired when the garage door enters an unknown or incorrect state.  This event will only fire if the garage door status is determined by 2 installed contacts (and both contacts are 'active' simultaneously).\par
+\par
+* Still Open: This event is fired when the door has been continuously open (not closed) longer than the 'Still Open Time' property.  Door must go from a Closed state to any other state (Open/Partially Open/Unknown) to start the timer.\par
+\par
+\b\par
+NOTE: When no feedback contacts are installed, 'Opened' and 'Closed' events happen immediately upon the garage door relay activation.\b0\par
+\par
+\ul\b                                                                      \ulnone\b0\par
+\b COMMANDS\b0\par
+\par
+* Select: This command causes the equivalent of the Experience Button being pressed on the UI.\par
+\par
+* OPEN: Causes the garage door to open.\par
+\par
+* CLOSE: Causes the garage door to close.\par
+\par
+* STOP: Causes the garage door to stop, assuming the relay setup and configuration supports stop.\par
+\par
+\ul\b                                                                      \ulnone\b0\par
+\b VARIABLES\b0\par
+                                                                              \par
+* STATE: This variable holds the garage door state.  Valid values include: 'Opened', 'Closed', 'Partial', and 'Unknown'.\par
+\par
+\ul\b                                                                      \ulnone\b0\par
+\b SUPPORT\b0\par
+\par
+For support on this driver please contact Control4 technical support or your local Control4 distributor.\par
+\par
+\ul\b                                                                      \ulnone\b0\par
+\b CHANGELOG\b0\par
+\par
+Version 1: Initial Release Version.\par
+\par
+Version 5: Added 'Still Open' timer and event, changed so that single relay toggle configuration always sends toggle, regardless of current state.\par
+\par
+Version 6: Fixed Defect #39360 - if gate is in a known state and command for that state is sent, it causes pulse getting driver into the wrong state.\par
+\par
+Version 7: Fixed Defect #41282 - Pulse times are not being used, driver always pulses for 500ms, increased maximum pulse time to 60 seconds..\par
+\par
+
+\pard\sa200\sl276\slmult1 Version 8, 9: Refresh of Driver Icons to new icon style.\par
+Version 10: Updated RecordHistory with Categories and Subcategories to match Contact/Relay drivers.\par
+Version 11: Added 'Did Not Open' and 'Did Not Close' events.\par
+
+\pard\nowidctlpar\par
+\par
+\par
+}
+ 

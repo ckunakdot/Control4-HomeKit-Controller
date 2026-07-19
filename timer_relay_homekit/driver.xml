@@ -1,0 +1,598 @@
+<devicedata>
+	<copyright>Copyright 2018 Control4 Corporation.  All rights reserved.</copyright>
+	<creator>Corey Kunak</creator>
+	<manufacturer>Denoftechnology llc</manufacturer>
+	<name>Relay</name>
+	<model>Timer</model>
+	<created>04/04/2016 11:42:36</created>
+  <modified>04/25/2019 12:34:56</modified>
+	<version>38</version>
+	<small image_source="c4z">icons/device_sm.png</small>
+	<large image_source="c4z">icons/device_lg.png</large>
+	<control>lua_gen</control>
+	<controlmethod>other</controlmethod>
+	<driver>DriverWorks</driver>
+	<auto_update>true</auto_update>
+	<minimum_auto_update_version>1</minimum_auto_update_version>
+	<minimum_os_version>2.9.0</minimum_os_version>
+	<OnlineCategory>others</OnlineCategory>
+	<proxies>
+		<proxy proxybindingid="5001" name="Relay" image_source="c4z" large_image="icons/device_lg.png" small_image="icons/device_sm.png">uibutton</proxy>
+	</proxies>
+	<config>
+		<documentation file="www/documentation.rtf"> 
+RELAY TIMER
+
+This driver enables timed control of a device controlled by a relay. It is an alternative to the relay driver included by default in My Drivers.
+
+Each press of the icon cycles through the list of duration options. Set the duration options as comma-delimited minutes in the driver’s "Countdown Times" property.
+
+To turn the system off, either continue to cycle through the options until Off is shown, or wait 5 seconds from the last option selected and the next press of the icon will turn the timer off.
+
+Events fire when the timer reaches each of the timed countdowns. You can use these with custom programming as required.
+
+You can also connect the driver to a relay or associate it with a switched light. The relay connection can be found on the connections tab.  To associate with a light switch select Light Switch as the control method.  Then select the light switch which is used to control the device.
+
+The "User timer if turned on manually" property enables you to set a timer automatically if the device is turned on via the relay or light switch.  Set this property to "Yes" then select the required run time from the dropdown box below.
+
+In each room where you want the timer to appear select the room and page in Composer and add make the timer visible.
+
+A keypad button link connection is available which also cycles through the time choices. The LED will indicate if the button has been pressed to select the next time ("Pressed LED Color"), if the timer is running ("On LED Color"), or if the device is off ("Off LED Color"). Colors can be customized for each of these states.
+
+CHANGES IN VERSION 35: Fixed Defect #40015 - Experience driver repopulates all default timers under system design on controller reboot or project reload.
+
+CHANGES IN VERSION 36: Fixed Defect #2694 / #2106 - Timer - Experience Driver not initializing properly
+
+CHANGES IN VERSION 38: Updated icons.
+
+</documentation>
+		<script jit="1" file="driver.lua"/>
+		<actions>
+        </actions>
+		<properties>
+			<property>
+				<name>Driver Version</name>
+				<default></default>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Debug Mode</name>
+				<type>LIST</type>
+				<items>
+					<item>Off</item>
+					<item>On</item>
+				</items>
+				<default>Off</default>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Driver Information</name>
+				<default></default>
+				<type>STRING</type>
+				<readonly>true</readonly>
+			</property>
+			<property>
+				<name>Countdown Times</name>
+				<default>1,2,3,4,5,6,7,8,9,10,15,20,25,30,35,40,45,50,55,60,90,120,180</default>
+				<type>STRING</type>
+				<readonly>false</readonly>
+				<description>Valid entries are 1,2,3,4,5,6,7,8,9,10,15,20,25,30,35,40,45,50,55,60,90,120,180</description>
+			</property>
+			<property>
+				<name>Permanent On is first selection</name>
+				<type>LIST</type>
+				<items>
+					<item>Yes</item>
+					<item>No</item>
+				</items>
+				<default>No</default>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>On LED Color</name>
+				<type>COLOR_SELECTOR</type>
+				<default>0,200,0</default>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Pressed LED Color</name>
+				<type>COLOR_SELECTOR</type>
+				<default>200,200,0</default>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Off LED Color</name>
+				<type>COLOR_SELECTOR</type>
+				<default>200,0,0</default>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Control Method</name>
+				<type>LIST</type>
+				<items>
+					<item>Relay</item>
+					<item>Light Switch</item>
+					<item>HomeKit</item>
+				</items>
+				<default>Relay</default>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Accessory AID</name>
+				<type>STRING</type>
+				<default>1</default>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Light Switch</name>
+				<type>DEVICE_SELECTOR</type>
+				<multiselect>False</multiselect>
+				<items>
+					<item>light_v2.c4i</item>
+				</items>
+			</property>
+			<property>
+				<name>Use timer if turned on manually</name>
+				<type>LIST</type>
+				<items>
+					<item>No</item>
+					<item>Yes</item>
+				</items>
+				<default>No</default>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Manual run time minutes</name>
+				<type>DYNAMIC_LIST</type>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Set LED colors for each time</name>
+				<type>LIST</type>
+				<items>
+					<item>No</item>
+					<item>Yes</item>
+				</items>
+				<default>No</default>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Select time</name>
+				<type>DYNAMIC_LIST</type>
+				<readonly>false</readonly>
+			</property>
+			<property>
+				<name>Choose LED Color</name>
+				<type>COLOR_SELECTOR</type>
+				<default>0,200,0</default>
+				<readonly>false</readonly>
+			</property>
+		</properties>
+		<commands>
+			<command>
+				<name>SetCountdown</name>
+				<description>Set countdown to PARAM1 mins on NAME</description>
+				<params>
+					<param>
+						<name>Time</name>
+						<type>CUSTOM_SELECT:GetTimesForProgramming</type>
+						<search/>
+					</param>
+				</params>
+			</command>
+		</commands>
+	</config>
+	<capabilities>
+		<navigator_display_option proxybindingid="5001">
+			<display_icons>
+				<Icon width="70" height="70">controller://driver/timer_relay/icons/device/Off_70.png</Icon>
+				<Icon width="90" height="90">controller://driver/timer_relay/icons/device/Off_90.png</Icon>
+				<Icon width="300" height="300">controller://driver/timer_relay/icons/device/Off_300.png</Icon>
+				<Icon width="512" height="512">controller://driver/timer_relay/icons/device/Off_512.png</Icon>
+				<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/Off_1024.png</Icon>
+				<state id="Off">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/Off_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/Off_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/Off_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/Off_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/Off_1024.png</Icon>
+				</state>
+				<state id="1">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/1_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/1_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/1_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/1_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/1_1024.png</Icon>
+				</state>
+				<state id="2">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/2_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/2_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/2_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/2_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/2_1024.png</Icon>
+				</state>
+				<state id="3">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/3_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/3_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/3_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/3_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/3_1024.png</Icon>
+				</state>
+				<state id="4">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/4_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/4_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/4_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/4_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/4_1024.png</Icon>
+				</state>
+				<state id="5">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/5_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/5_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/5_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/5_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/5_1024.png</Icon>
+				</state>
+				<state id="6">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/6_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/6_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/6_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/6_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/6_1024.png</Icon>
+				</state>
+				<state id="7">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/7_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/7_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/7_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/7_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/7_1024.png</Icon>
+				</state>
+				<state id="8">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/8_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/8_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/8_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/8_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/8_1024.png</Icon>
+				</state>
+				<state id="9">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/9_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/9_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/9_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/9_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/9_1024.png</Icon>
+				</state>
+				<state id="10">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/10_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/10_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/10_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/10_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/10_1024.png</Icon>
+				</state>
+				<state id="15">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/15_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/15_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/15_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/15_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/15_1024.png</Icon>
+				</state>
+				<state id="20">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/20_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/20_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/20_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/20_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/20_1024.png</Icon>
+				</state>
+				<state id="25">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/25_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/25_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/25_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/25_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/25_1024.png</Icon>
+				</state>
+				<state id="30">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/30_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/30_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/30_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/30_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/30_1024.png</Icon>
+				</state>
+				<state id="35">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/35_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/35_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/35_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/35_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/35_1024.png</Icon>
+				</state>
+				<state id="40">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/40_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/40_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/40_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/40_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/40_1024.png</Icon>
+				</state>
+				<state id="45">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/45_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/45_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/45_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/45_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/45_1024.png</Icon>
+				</state>
+				<state id="50">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/50_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/50_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/50_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/50_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/50_1024.png</Icon>
+				</state>
+				<state id="55">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/55_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/55_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/55_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/55_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/55_1024.png</Icon>
+				</state>
+				<state id="60">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/60_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/60_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/60_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/60_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/60_1024.png</Icon>
+				</state>
+				<state id="90">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/90_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/90_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/90_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/90_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/90_1024.png</Icon>
+				</state>
+				<state id="120">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/120_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/120_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/120_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/120_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/120_1024.png</Icon>
+				</state>
+				<state id="180">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/180_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/180_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/180_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/180_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/180_1024.png</Icon>
+				</state>
+				<state id="On">
+					<Icon width="70" height="70">controller://driver/timer_relay/icons/device/On_70.png</Icon>
+					<Icon width="90" height="90">controller://driver/timer_relay/icons/device/On_90.png</Icon>
+					<Icon width="300" height="300">controller://driver/timer_relay/icons/device/On_300.png</Icon>
+					<Icon width="512" height="512">controller://driver/timer_relay/icons/device/On_512.png</Icon>
+					<Icon width="1024" height="1024">controller://driver/timer_relay/icons/device/On_1024.png</Icon>
+				</state>
+			</display_icons>
+		</navigator_display_option>
+	</capabilities>
+	<connections>
+		<connection>
+			<id>5001</id>
+			<facing>6</facing>
+			<connectionname>UIBUTTON</connectionname>
+			<type>2</type>
+			<consumer>False</consumer>
+			<audiosource>False</audiosource>
+			<videosource>False</videosource>
+			<linelevel>False</linelevel>
+			<classes>
+				<class>
+					<classname>UIBUTTON</classname>
+				</class>
+			</classes>
+		</connection>
+		<connection>
+			<id>2</id>
+			<facing>6</facing>
+			<connectionname>Control Relay</connectionname>
+			<type>1</type>
+			<consumer>True</consumer>
+			<audiosource>False</audiosource>
+			<videosource>False</videosource>
+			<linelevel>True</linelevel>
+			<classes>
+				<class>
+					<classname>RELAY</classname>
+				</class>
+			</classes>
+		</connection>
+		<connection>
+			<id>500</id>
+			<facing>6</facing>
+			<connectionname>Toggle</connectionname>
+			<type>1</type>
+			<consumer>False</consumer>
+			<audiosource>False</audiosource>
+			<videosource>False</videosource>
+			<linelevel>False</linelevel>
+			<classes>
+				<class>
+					<classname>BUTTON_LINK</classname>
+					<autobind>False</autobind>
+				</class>
+			</classes>
+			<hidden>False</hidden>
+		</connection>
+		<connection>
+			<id>501</id>
+			<facing>6</facing>
+			<connectionname>On</connectionname>
+			<type>1</type>
+			<consumer>False</consumer>
+			<audiosource>False</audiosource>
+			<videosource>False</videosource>
+			<linelevel>False</linelevel>
+			<classes>
+				<class>
+					<classname>BUTTON_LINK</classname>
+					<autobind>False</autobind>
+				</class>
+			</classes>
+			<hidden>False</hidden>
+		</connection>
+		<connection>
+			<id>502</id>
+			<facing>6</facing>
+			<connectionname>Off</connectionname>
+			<type>1</type>
+			<consumer>False</consumer>
+			<audiosource>False</audiosource>
+			<videosource>False</videosource>
+			<linelevel>False</linelevel>
+			<classes>
+				<class>
+					<classname>BUTTON_LINK</classname>
+					<autobind>False</autobind>
+				</class>
+			</classes>
+			<hidden>False</hidden>
+		</connection>
+		<connection>
+			<id>999</id>
+			<facing>1</facing>
+			<connectionname>HomeKit Hub</connectionname>
+			<type>1</type>
+			<consumer>True</consumer>
+			<audiosource>False</audiosource>
+			<videosource>False</videosource>
+			<linelevel>False</linelevel>
+			<classes>
+				<class>
+					<classname>HOMEKIT_DEVICE</classname>
+					<autobind>True</autobind>
+				</class>
+			</classes>
+		</connection>
+	</connections>
+	<events>
+		<event>
+			<id>1</id>
+			<name>Off</name>
+			<description>Relay Off from NAME</description>
+		</event>
+		<event>
+			<id>2</id>
+			<name>1</name>
+			<description>Relay 1min from NAME</description>
+		</event>
+		<event>
+			<id>3</id>
+			<name>2</name>
+			<description>Relay 2mins from NAME</description>
+		</event>
+		<event>
+			<id>4</id>
+			<name>3</name>
+			<description>Relay 3mins from NAME</description>
+		</event>
+		<event>
+			<id>5</id>
+			<name>4</name>
+			<description>Relay 4mins from NAME</description>
+		</event>
+		<event>
+			<id>6</id>
+			<name>5</name>
+			<description>Relay 5mins from NAME</description>
+		</event>
+		<event>
+			<id>7</id>
+			<name>6</name>
+			<description>Relay 6mins from NAME</description>
+		</event>
+		<event>
+			<id>8</id>
+			<name>7</name>
+			<description>Relay 7mins from NAME</description>
+		</event>
+		<event>
+			<id>9</id>
+			<name>8</name>
+			<description>Relay 8mins from NAME</description>
+		</event>
+		<event>
+			<id>10</id>
+			<name>9</name>
+			<description>Relay 9mins from NAME</description>
+		</event>
+		<event>
+			<id>11</id>
+			<name>10</name>
+			<description>Relay 10mins from NAME</description>
+		</event>
+		<event>
+			<id>12</id>
+			<name>15</name>
+			<description>Relay 15mins from NAME</description>
+		</event>
+		<event>
+			<id>13</id>
+			<name>20</name>
+			<description>Relay 20mins from NAME</description>
+		</event>
+		<event>
+			<id>14</id>
+			<name>25</name>
+			<description>Relay 25mins from NAME</description>
+		</event>
+		<event>
+			<id>15</id>
+			<name>30</name>
+			<description>Relay 30mins from NAME</description>
+		</event>
+		<event>
+			<id>16</id>
+			<name>35</name>
+			<description>Relay 35mins from NAME</description>
+		</event>
+		<event>
+			<id>17</id>
+			<name>40</name>
+			<description>Relay 40mins from NAME</description>
+		</event>
+		<event>
+			<id>18</id>
+			<name>45</name>
+			<description>Relay 45mins from NAME</description>
+		</event>
+		<event>
+			<id>19</id>
+			<name>50</name>
+			<description>Relay 50mins from NAME</description>
+		</event>
+		<event>
+			<id>20</id>
+			<name>55</name>
+			<description>Relay 55mins from NAME</description>
+		</event>
+		<event>
+			<id>21</id>
+			<name>60</name>
+			<description>Relay 60mins from NAME</description>
+		</event>
+		<event>
+			<id>22</id>
+			<name>90</name>
+			<description>Relay 90mins from NAME</description>
+		</event>
+		<event>
+			<id>23</id>
+			<name>120</name>
+			<description>Relay 120mins from NAME</description>
+		</event>
+		<event>
+			<id>24</id>
+			<name>180</name>
+			<description>Relay 180mins from NAME</description>
+		</event>
+		<event>
+			<id>100</id>
+			<name>On</name>
+			<description>Relay On from NAME</description>
+		</event>
+	</events>
+</devicedata>
