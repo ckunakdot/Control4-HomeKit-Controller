@@ -1,0 +1,142 @@
+<devicedata>
+  <copyright>Copyright 2026</copyright>
+  <creator>Corey Kunak</creator>
+  <manufacturer>Denoftechnology llc</manufacturer>
+  <name>HomeKit Thermostat</name>
+  <model>HomeKit Thermostat</model>
+  <created>2026-07-13</created>
+  <modified>2026-07-13</modified>
+  <version>1</version>
+  <small image_source="c4z">device_sm.png</small>
+  <large image_source="c4z">device_lg.png</large>
+  <control>lua_gen</control>
+  <controlmethod>other</controlmethod>
+  <driver>DriverWorks</driver>
+  <proxies qty="1">
+    <proxy proxybindingid="5001" name="HomeKit Thermostat">thermostatV2</proxy>
+  </proxies>
+  <capabilities>
+    <can_heat>true</can_heat>
+    <can_cool>true</can_cool>
+    <can_change_scale>true</can_change_scale>
+    <can_do_auto>true</can_do_auto>
+    <can_auto>true</can_auto>
+    <can_calibrate>false</can_calibrate>
+    <has_single_setpoint>false</has_single_setpoint>
+    <has_remote_sensor>true</has_remote_sensor>
+    <has_extras>false</has_extras>
+    <has_connection_status>true</has_connection_status>
+
+    <!-- HomeKit thermostats work in Celsius; these cover the usual HAP
+         limits (10-35C), expressed in both scales -->
+    <setpoint_heat_min_f>50</setpoint_heat_min_f>
+    <setpoint_heat_min_c>10</setpoint_heat_min_c>
+    <setpoint_heat_max_f>95</setpoint_heat_max_f>
+    <setpoint_heat_max_c>35</setpoint_heat_max_c>
+    <setpoint_heat_min>10</setpoint_heat_min>
+    <setpoint_heat_max>95</setpoint_heat_max>
+    <setpoint_cool_min_f>50</setpoint_cool_min_f>
+    <setpoint_cool_min_c>10</setpoint_cool_min_c>
+    <setpoint_cool_max_f>95</setpoint_cool_max_f>
+    <setpoint_cool_max_c>35</setpoint_cool_max_c>
+    <setpoint_cool_min>10</setpoint_cool_min>
+    <setpoint_cool_max>95</setpoint_cool_max>
+    <setpoint_single_min_f>50</setpoint_single_min_f>
+    <setpoint_single_min_c>10</setpoint_single_min_c>
+    <setpoint_single_max_f>95</setpoint_single_max_f>
+    <setpoint_single_max_c>35</setpoint_single_max_c>
+
+    <hvac_states>Off,Heat,Cool,Auto</hvac_states>
+    <fan_states>Auto,On</fan_states>
+
+    <can_preset_schedule>false</can_preset_schedule>
+    <can_preset>false</can_preset>
+  </capabilities>
+  <config>
+    <script jit="1" file="driver.lua"/>
+    <properties>
+      <property>
+        <name>Driver Version</name>
+        <type>STRING</type>
+        <readonly>true</readonly>
+        <default>1.0.0</default>
+      </property>
+      <property>
+        <name>Accessory AID</name>
+        <type>STRING</type>
+        <default>1</default>
+        <tooltip>Accessory ID (aid) on the paired HomeKit accessory this thermostat represents.</tooltip>
+      </property>
+      <property>
+        <name>Debug Mode</name>
+        <type>LIST</type>
+        <items>
+          <item>Off</item>
+          <item>On</item>
+        </items>
+        <default>Off</default>
+      </property>
+    </properties>
+    <actions />
+    <commands />
+  </config>
+  <connections>
+    <connection>
+      <id>999</id>
+      <facing>1</facing>
+      <type>1</type>
+      <connectionname>HomeKit Hub</connectionname>
+      <consumer>True</consumer>
+      <classes>
+        <class>
+          <classname>HOMEKIT_DEVICE</classname>
+          <autobind>True</autobind>
+        </class>
+      </classes>
+    </connection>
+    <connection>
+      <id>1</id>
+      <facing>6</facing>
+      <connectionname>Temperature</connectionname>
+      <type>1</type>
+      <consumer>True</consumer>
+      <classes>
+        <class>
+          <classname>TEMPERATURE_VALUE</classname>
+        </class>
+      </classes>
+    </connection>
+    <connection>
+      <id>5001</id>
+      <facing>6</facing>
+      <type>2</type>
+      <connectionname>Thermostat</connectionname>
+      <consumer>False</consumer>
+      <classes>
+        <class>
+          <classname>THERMOSTAT</classname>
+        </class>
+      </classes>
+    </connection>
+    <connection>
+      <id>7000</id>
+      <facing>6</facing>
+      <connectionname>Selection</connectionname>
+      <type>7</type>
+      <consumer>False</consumer>
+      <audiosource>False</audiosource>
+      <videosource>False</videosource>
+      <linelevel>False</linelevel>
+      <classes>
+        <class>
+          <autobind>True</autobind>
+          <classname>TEMPERATURE</classname>
+        </class>
+        <class>
+          <autobind>True</autobind>
+          <classname>TEMPERATURE_CONTROL</classname>
+        </class>
+      </classes>
+    </connection>
+  </connections>
+</devicedata>
