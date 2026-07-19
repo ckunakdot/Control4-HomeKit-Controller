@@ -122,16 +122,17 @@ Bridges any HomeKit binary sensor to a Control4 contact sensor.
 - Supports Contact, Motion, Occupancy, Smoke, and Leak sensors.
 - Reports OPENED when the sensor is active or detecting, CLOSED when it is not.
 - A Sensor Type property selects which sensor to follow. One accessory can expose several at once, such as an ecobee that publishes both motion and occupancy, so add one instance per sensor and point them all at the same Accessory AID. Left on Auto, the driver uses the first sensor it finds, which suits accessories with only one.
+- Handles accessories that publish the same kind of sensor as several separate zones, such as the Aqara FP2's presence zones. A Zone property selects a named zone, using the name set in the accessory's own app. Add one instance per zone and point them all at the same Accessory AID; each is addressed by its own characteristic, so zones do not overwrite one another. Left on Auto, it follows the first matching sensor.
 - An Invert property swaps the reported state for cases where the opposite convention is wanted.
 - The output is a standard Control4 contact sensor, so it can be bound to a Motion Sensor or similar proxy to present properly in Navigator with the matching events and history.
 
 ### homekit-sensor
 
-Bridges HomeKit environmental sensors to Control4 temperature and humidity values.
+Bridges HomeKit environmental sensors to Control4 temperature, humidity, and light-level values.
 
 - Reports temperature in both Celsius and Fahrenheit, so Control4 can display either.
 - Reports relative humidity.
-- Reads ambient light level into a variable when the accessory provides it.
+- Reports ambient light level (lux) as a variable, and makes it programmable. Configurable Dark Threshold and Bright Threshold properties set a hysteresis band; a LIGHT_IS_DARK variable tracks the current side of that band; and Became Dark and Became Bright programming events fire on a real transition. The dead-band between the two thresholds keeps light hovering at dusk from flapping the events, so an ambient-light reading can drive lighting scenes directly without extra programming.
 
 ### homekit-garage
 
@@ -151,6 +152,23 @@ Bridges a HomeKit Security System to Control4 security panel and partition proxi
 - Derives an exit-delay state, which HomeKit does not report directly, by detecting when the accessory is still disarmed while an arm mode is pending.
 - An optional User Code property makes Control4 prompt for a code, which the driver checks before arming or disarming. HomeKit does not carry a user code over the protocol, so this is a Control4-side check rather than one enforced by the accessory. Left blank, no code is requested.
 
+### timer-sprinkler (HomeKit irrigation)
+
+A countdown-timer front-end that controls a HomeKit Valve or Irrigation System, such as a Rachio. Unlike the proxy child drivers, this presents in Navigator as a timer button rather than a device proxy: pick a run time and the zone waters for that long, then shuts off.
+
+- One timer per zone, addressed by its Accessory AID. On systems that publish each zone as its own accessory (Rachio), you add one timer per zone.
+- Writes the run duration and the start command together so the accessory's own timer matches the countdown.
+- Wakes the parent Irrigation System accessory automatically when a zone starts, for controllers that gate zones behind a system-active state.
+- A Control Method property (Relay, Light Switch, or HomeKit) lets the same driver drive a physical relay, a bound Control4 light, or a HomeKit valve, so it can be reused outside HomeKit too.
+
+### timer-relay (HomeKit switch / relay)
+
+A countdown-timer and relay front-end that controls a HomeKit Switch, Outlet, or Valve on a timer or as a plain on/off.
+
+- Timed runs or permanent on/off.
+- Sends the correct value type for the target automatically, since a switch's On characteristic and a valve's Active characteristic are different types in HomeKit.
+- The same Control Method property as timer-sprinkler, so it works with a physical relay, a bound light, or a HomeKit accessory.
+
 ## Supported accessory types
 
 | HomeKit service | Child driver | Control4 proxy |
@@ -163,9 +181,11 @@ Bridges a HomeKit Security System to Control4 security panel and partition proxi
 | Switch, Outlet | homekit-light | light_v2 (on/off) |
 | Fan, Fanv2 | homekit-fan-Nspeed | fan |
 | Contact, Motion, Occupancy, Smoke, Leak | homekit-contact | contact sensor |
-| Temperature, Humidity, Light sensors | homekit-sensor | temperature and humidity values |
+| Temperature, Humidity, Light sensors | homekit-sensor | temperature, humidity, and light-level values |
 | Garage Door Opener | homekit-garage | relay and contact sensors |
 | Security System | homekit-alarm | securitypanel and security |
+| Valve, Irrigation System | timer-sprinkler | countdown timer |
+| Switch, Outlet, Valve (timed) | timer-relay | countdown timer / relay |
 
 ## Tested Controllers
 
@@ -188,6 +208,10 @@ These have been paired and exercised against the drivers. Anything that speaks H
 | Lutron RadioRA 3 | Each shared load as its own accessory | homekit-light |
 | Lutron Caseta | Each shared load as its own accessory | homekit-light |
 | Bond Bridge Pro | One accessory per device it controls, such as shades and fans | homekit-shade, homekit-fan-Nspeed |
+| Bond Bridge (original) | One accessory per device it controls, such as shades and fans | homekit-shade, homekit-fan-Nspeed |
+| Rachio Smart Sprinkler Controller | An Irrigation System accessory, plus one Valve accessory per zone | timer-sprinkler set to HomeKit, one instance per zone |
+| Aqara Presence Sensor FP2 | Occupancy per detection zone, plus ambient light, all on one accessory | homekit-contact per zone (Zone property), and homekit-sensor for the light level |
+| TP-Link Kasa EP25 (smart plug) | Outlet | homekit-light (on/off), or timer-relay for timed runs |
 | Homebridge | One accessory per plugin-provided device | Whichever child matches each accessory |
 
 Notes from testing these:
@@ -195,6 +219,10 @@ Notes from testing these:
 - The ecobee publishes its thermostat, motion sensor and occupancy sensor on one accessory, so all three child drivers share the same Accessory AID and are told apart by Sensor Type.
 - Lutron processors only publish the loads that have been shared to HomeKit. If a load is missing from Show Accessories, share it in the Lutron app first. (RA3 Only Caseta shows all)
 - Lutron accessory IDs are very large numbers rather than the small ones most accessories use. This is handled, and is worth knowing only because the `aid` you copy from Show Accessories will be long.
+- The original Bond Bridge behaves like the Bond Bridge Pro: one accessory per device it controls, matched to homekit-shade or homekit-fan-Nspeed.
+- Rachio exposes each zone as its own Valve accessory, with a separate Irrigation System accessory for the controller itself. Add one timer-sprinkler per zone and set its Accessory AID to that zone; the system accessory is woken automatically when a zone runs. A HomeKit valve reports and accepts its on/off state as a number rather than a true/false, which the driver handles — worth knowing only if you write to one yourself.
+- The Aqara FP2 publishes each presence zone you draw in the Aqara app as its own occupancy service, carrying that zone's name. Add one homekit-contact per zone and pick the zone in its Zone property; use homekit-sensor for the FP2's ambient-light reading, including its Dark/Bright threshold events.
+- The TP-Link Kasa EP25 presents as an Outlet. Control it on/off through homekit-light, or through timer-relay when you want a timed run.
 - Homebridge is useful for testing. Its plugins can present almost any accessory type, and its pairing can be reset from the Homebridge UI without touching real hardware, which makes it a safe way to try a child driver before pointing it at something real.
 - A Homebridge virtual thermostat is a Heater/Cooler rather than a Thermostat. Both are supported, but they behave differently: see the homekit-thermostat section.
 
