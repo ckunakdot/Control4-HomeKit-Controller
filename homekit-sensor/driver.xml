@@ -1,0 +1,139 @@
+<devicedata>
+  <copyright>Copyright 2026</copyright>
+  <creator>Corey Kunak</creator>
+  <manufacturer>Denoftechnology llc</manufacturer>
+  <name>HomeKit Sensor</name>
+  <model>HomeKit Sensor</model>
+  <created>07/14/2026 12:00</created>
+  <modified>07/14/2026 12:00</modified>
+  <version>1</version>
+  <small image_source="c4z">device_sm.png</small>
+  <large image_source="c4z">device_lg.png</large>
+  <control>lua_gen</control>
+  <controlmethod>IP</controlmethod>
+  <driver>DriverWorks</driver>
+  <combo>true</combo>
+  <composer_categories>
+    <category>other</category>
+  </composer_categories>
+  <config>
+    <script jit="1" file="driver.lua"/>
+    <properties>
+      <property>
+        <name>Driver Version</name>
+        <type>STRING</type>
+        <readonly>true</readonly>
+        <default>1.0.0</default>
+      </property>
+      <property>
+        <name>Accessory AID</name>
+        <type>STRING</type>
+        <default>1</default>
+        <readonly>false</readonly>
+      </property>
+      <property>
+        <name>Dark Threshold (lux)</name>
+        <type>STRING</type>
+        <default>20</default>
+        <readonly>false</readonly>
+      </property>
+      <property>
+        <name>Bright Threshold (lux)</name>
+        <type>STRING</type>
+        <default>30</default>
+        <readonly>false</readonly>
+      </property>
+      <property>
+        <name>Temperature</name>
+        <type>STRING</type>
+        <readonly>true</readonly>
+        <default></default>
+      </property>
+      <property>
+        <name>Humidity</name>
+        <type>STRING</type>
+        <readonly>true</readonly>
+        <default></default>
+      </property>
+      <property>
+        <name>Light Level</name>
+        <type>STRING</type>
+        <readonly>true</readonly>
+        <default></default>
+      </property>
+      <property>
+        <name>Last Updated</name>
+        <type>STRING</type>
+        <readonly>true</readonly>
+        <default></default>
+      </property>
+      <property>
+        <name>Debug Mode</name>
+        <type>LIST</type>
+        <items>
+          <item>Off</item>
+          <item>On</item>
+        </items>
+        <default>Off</default>
+        <readonly>false</readonly>
+      </property>
+    </properties>
+    <actions>
+    </actions>
+    <commands/>
+  </config>
+  <proxy name="HomeKit Sensor">other</proxy>
+  <capabilities>
+  </capabilities>
+  <events>
+    <event>
+      <id>1</id>
+      <name>Became Dark</name>
+      <description>Light level fell to or below the Dark Threshold</description>
+    </event>
+    <event>
+      <id>2</id>
+      <name>Became Bright</name>
+      <description>Light level rose to or above the Bright Threshold</description>
+    </event>
+  </events>
+  <connections>
+    <connection>
+      <id>500</id>
+      <facing>6</facing>
+      <connectionname>Temperature Value</connectionname>
+      <type>1</type>
+      <consumer>False</consumer>
+      <classes>
+        <class>
+          <classname>TEMPERATURE_VALUE</classname>
+        </class>
+      </classes>
+    </connection>
+    <connection>
+      <id>600</id>
+      <facing>6</facing>
+      <connectionname>Humidity</connectionname>
+      <type>1</type>
+      <consumer>False</consumer>
+      <classes>
+        <class>
+          <classname>HUMIDITY_VALUE</classname>
+        </class>
+      </classes>
+    </connection>
+    <connection>
+      <id>999</id>
+      <facing>1</facing>
+      <type>1</type>
+      <connectionname>HomeKit Hub</connectionname>
+      <consumer>True</consumer>
+      <classes>
+        <class>
+          <classname>HOMEKIT_DEVICE</classname>
+          <autobind>True</autobind>
+        </class>
+      </classes>
+    </connection>
+  </connections>
+</devicedata>

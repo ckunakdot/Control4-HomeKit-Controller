@@ -1,0 +1,76 @@
+<devicedata>
+  <copyright>Copyright 2026</copyright>
+  <creator>Corey Kunak</creator>
+  <manufacturer>Denoftechnology llc</manufacturer>
+  <name>HomeKit Fan 5-speed</name>
+  <model>HomeKit Fan 5-speed</model>
+  <created>2026-07-14</created>
+  <modified>2026-07-14</modified>
+  <version>1</version>
+  <small image_source="c4z">device_sm.png</small>
+  <large image_source="c4z">device_lg.png</large>
+  <control>lua_gen</control>
+  <controlmethod>other</controlmethod>
+  <driver>DriverWorks</driver>
+  <proxies qty="1">
+    <proxy proxybindingid="5001" name="HomeKit Fan">fan</proxy>
+  </proxies>
+  <capabilities>
+    <discrete_levels>5</discrete_levels>
+  </capabilities>
+  <config>
+    <script jit="1" file="driver.lua"/>
+    <properties>
+      <property>
+        <name>Driver Version</name>
+        <type>STRING</type>
+        <readonly>true</readonly>
+        <default>1.0.0</default>
+      </property>
+      <property>
+        <name>Accessory AID</name>
+        <type>STRING</type>
+        <default>1</default>
+        <tooltip>Accessory ID (aid) of the HomeKit fan. Use Show Accessories on the hub to find it.</tooltip>
+      </property>
+      <property>
+        <name>Debug Mode</name>
+        <type>LIST</type>
+        <items>
+          <item>Off</item>
+          <item>On</item>
+        </items>
+        <default>Off</default>
+      </property>
+    </properties>
+    <actions />
+    <commands />
+  </config>
+  <connections>
+    <connection>
+      <id>5001</id>
+      <facing>6</facing>
+      <connectionname>Fan</connectionname>
+      <type>2</type>
+      <consumer>False</consumer>
+      <classes>
+        <class>
+          <classname>FAN</classname>
+        </class>
+      </classes>
+    </connection>
+    <connection>
+      <id>999</id>
+      <facing>1</facing>
+      <type>1</type>
+      <connectionname>HomeKit Hub</connectionname>
+      <consumer>True</consumer>
+      <classes>
+        <class>
+          <classname>HOMEKIT_DEVICE</classname>
+          <autobind>True</autobind>
+        </class>
+      </classes>
+    </connection>
+  </connections>
+</devicedata>
