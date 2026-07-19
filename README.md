@@ -255,7 +255,10 @@ The accessory then appears in Navigator as a native device and can be used in Co
 <img width="884" height="281" alt="Show Accessories output" src="https://github.com/user-attachments/assets/ddef788a-1c73-41bc-b795-c7dbac0d021d" />
 
 ## Notes
-
+-Basic Troubleshooting
+-If you have itunes on a pc or mac you can also run to discover devices
+-dns-sd -B _hap._tcp                     (list all HomeKit accessories)
+-dns-sd -L "My Device" _hap._tcp         (show its host:port + TXT, incl. sf/md/id)
 - A HomeKit setup code pairs an accessory to the first controller that claims it. If an accessory is already paired to another controller or app, remove it there first, or reset its HomeKit pairing, before pairing it here.
 - Use **Remove Pairing** before deleting or replacing a hub driver. That releases the pairing on the accessory as well; otherwise the accessory keeps a pairing that no longer exists and will refuse to pair again until it is reset.
 - Pairings are stored per driver instance on a specific controller. To move to a newer version of a driver, use Update Driver in place so the existing pairings carry over.
