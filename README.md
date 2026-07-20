@@ -212,6 +212,7 @@ These have been paired and exercised against the drivers. Anything that speaks H
 | Rachio Smart Sprinkler Controller | An Irrigation System accessory, plus one Valve accessory per zone | timer-sprinkler set to HomeKit, one instance per zone |
 | Aqara Presence Sensor FP2 | Occupancy per detection zone, plus ambient light, all on one accessory | homekit-contact per zone (Zone property), and homekit-sensor for the light level |
 | TP-Link Kasa EP25 (smart plug) | Outlet | homekit-light (on/off), or timer-relay for timed runs |
+| Honeywell T9 | Thermostat | homekit-thermostat|
 | Homebridge | One accessory per plugin-provided device | Whichever child matches each accessory |
 
 Notes from testing these:
