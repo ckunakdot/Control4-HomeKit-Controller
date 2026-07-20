@@ -259,19 +259,18 @@ The accessory then appears in Navigator as a native device and can be used in Co
 - My setup has all equipment configured with either static IP addresses or DHCP reservations.
 
 ## Basic Troubleshooting
-If you have iTunes installed on a PC or Mac, you can use `dns-sd` to discover HomeKit devices on the network.
+
+- If pairing appears to be stuck, reboot your controller and try pairing again.
+- If you have iTunes installed on a PC or Mac, you can use `dns-sd` to discover HomeKit devices on the network.
+
 Command to list all HomeKit accessories:
-
 `dns-sd -B _hap._tcp`
-
 Command to show a device host, port, and TXT records, including `sf`, `md`, and `id`:
-
 `dns-sd -L "My Device" _hap._tcp`
 
 ## Pairing Notes
-
 A HomeKit setup code pairs an accessory to the first controller that claims it. If an accessory is already paired to another controller or app, remove it there first, or reset its HomeKit pairing before pairing it here.
 Use **Remove Pairing** before deleting or replacing a hub driver. This releases the pairing on the accessory. Otherwise, the accessory may keep a pairing that no longer exists and refuse to pair again until it is reset.
 Pairings are stored per driver instance on a specific controller. To move to a newer driver version, use **Update Driver** in place so the existing pairings carry over.
 Everything runs locally on the Control4 Director. There is no cloud dependency and no bridge software required.
-Some low-cost accessories ship with limited HAP implementations and may not pair reliably. The **Compact Pairing** option on the hub may resolve this for some devices.
+
