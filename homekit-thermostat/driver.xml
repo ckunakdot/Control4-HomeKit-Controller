@@ -53,7 +53,7 @@
     <can_preset>false</can_preset>
   </capabilities>
   <config>
-    <script jit="1" file="driver.lua"/>
+    <script file="driver.lua" jit="1" />
     <properties>
       <property>
         <name>Driver Version</name>

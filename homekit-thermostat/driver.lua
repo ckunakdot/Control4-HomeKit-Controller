@@ -1,10 +1,10 @@
 package.preload['commands'] = (function (...)
-
 local PROXY, HUB = 5001, 999
 local AID
 local TYPEMAP, IIDTYPE, STATE, META = {}, {}, {}, {}
 local SELECTED_SCALE = "FAHRENHEIT"
 local HAS_HUMIDITY, HAS_FAN, ONLINE, IS_HC = false, false, false, false
+local gScoped = false
 
 local SENSOR_BINDING = 1
 local HAS_REMOTE_SENSOR, REMOTE_TEMP_C, REMOTE_UNAVAIL = false, nil, false
@@ -29,7 +29,19 @@ local function norm(t)
   return (t:gsub("^0+(%x)", "%1"))
 end
 local function aidfmt(a) local n = tonumber(a); return n and string.format("%.0f", n) or tostring(a) end
-local function notify(cmd, p) C4:SendToProxy(PROXY, cmd, p, "NOTIFY") end
+local NOTIFY_LAST = {}
+local function notify(cmd, p)
+  local sig = cmd
+  if type(p) == "table" then
+    local keys = {}
+    for k in pairs(p) do keys[#keys + 1] = tostring(k) end
+    table.sort(keys)
+    for _, k in ipairs(keys) do sig = sig .. "|" .. k .. "=" .. tostring(p[k]) end
+  end
+  if NOTIFY_LAST[cmd] == sig then return end
+  NOTIFY_LAST[cmd] = sig
+  C4:SendToProxy(PROXY, cmd, p, "NOTIFY")
+end
 local function to_hub(cmd, p) p = p or {}; p.aid = AID; C4:SendToProxy(HUB, cmd, p) end
 local function c2f(c) return c * 9 / 5 + 32 end
 local function f2c(f) return (f - 32) * 5 / 9 end
@@ -190,7 +202,7 @@ GCPL.OnBindingChanged = function(idBinding, class, bIsBound)
     return
   end
   if tonumber(idBinding) == HUB then
-    if bIsBound then to_hub("HK_GET_STATE")
+    if bIsBound then NOTIFY_LAST = {}; to_hub("HK_GET_STATE")
     else ONLINE = false; notify("CONNECTION", { CONNECTED = "false" }) end
   end
 end
@@ -266,6 +278,7 @@ end
 
 function RFP.RECEIVE_DB(idBinding, tParams)
   if aidfmt(tParams.aid) ~= AID then return end
+  if gScoped then return end
   local ok, map = pcall(function() return JSON:decode(tParams.data) end)
   if ok then
     set_iid_maps(map)
@@ -278,6 +291,42 @@ function RFP.RECEIVE_DB(idBinding, tParams)
     send_caps()
     report_all()
   end
+end
+
+function RFP.RECEIVE_SERVICES(idBinding, tParams)
+  if aidfmt(tParams.aid) ~= AID then return end
+  local ok, list = pcall(function() return JSON:decode(tParams.data) end)
+  if not (ok and type(list) == "table") then return end
+  local chars, is_hc
+  for _, sv in ipairs(list) do
+    local t = sv.type and norm(sv.type)
+    if t == "BC" and sv.chars then chars, is_hc = sv.chars, true; break end
+  end
+  if not chars then
+    for _, sv in ipairs(list) do
+      local t = sv.type and norm(sv.type)
+      if t == "4A" and sv.chars then chars, is_hc = sv.chars, false; break end
+    end
+  end
+  if not chars then return end
+  local merged = {}
+  for k, v in pairs(chars) do merged[k] = v end
+  for _, sv in ipairs(list) do
+    local t = sv.type and norm(sv.type)
+    if (t == "40" or t == "B7") and sv.chars then
+      for k, v in pairs(sv.chars) do if merged[k] == nil then merged[k] = v end end
+    end
+  end
+  set_iid_maps(merged)
+  gScoped = true
+  IS_HC = is_hc
+  HAS_FAN = (not IS_HC) and (TYPEMAP[HK.FAN_TGT] ~= nil)
+  HAS_HUMIDITY = (TYPEMAP[HK.HUM] ~= nil)
+  dbg("scoped to " .. (IS_HC and "HeaterCooler" or "Thermostat")
+      .. " service; humidity=" .. tostring(HAS_HUMIDITY) .. " fan=" .. tostring(HAS_FAN))
+  mark_online()
+  send_caps()
+  report_all()
 end
 
 local function apply_chars(list)
@@ -461,7 +510,6 @@ end
 function ToFahrenheit(c)
     return c * 9 / 5 + 32
 end
-
  end)
 
 package.preload['module.json'] = (function (...)
@@ -1031,7 +1079,6 @@ function OBJDEF:new(args)
 end
 
 return OBJDEF:new()
-
  end)
 
 JSON = require("module.json")
