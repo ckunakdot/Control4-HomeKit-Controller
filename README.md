@@ -1,8 +1,8 @@
 # Control4 HomeKit Controller
 ## NOTE
-## - The pairing process can be slow on large projects or overloaded EA/Core controllers. The CA-10 does not have this issue.
+- The pairing process can be slow on large projects or overloaded EA/Core controllers. The CA-10 does not have this issue.
 - I am working on a fix to improve pairing performance in a future update.
- 
+## 
 A native HomeKit controller for Control4. It pairs directly with "Works with HomeKit" accessories over the local network and bridges them into Control4 as standard device proxies. No Home Assistant, no external bridge software, and no cloud connection are required — the Control4 talks to each accessory directly using the HomeKit Accessory Protocol (HAP).
 The suite is made up of one hub driver and a set of per-accessory child drivers. The hub owns discovery, pairing, and the encrypted connection to the accessory. Each child driver presents one paired accessory to Control4 as the appropriate native proxy.
 ##
